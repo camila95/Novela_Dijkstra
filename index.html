@@ -1,0 +1,235 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>Grafo</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="shortcut icon" type="image/png" href="img/icono.png"/>
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="css/font-awesome.min.css">
+        <style type="text/css">
+            body {
+                padding-top: 70px;
+            }
+            #juego > img {
+                display: block;
+                margin: 0 auto;
+                max-height: 550px;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <ul></ul>
+                </div>
+            </div>
+        </nav>
+        <div class="container">
+            <div id="test">
+                
+                <div class="row">
+                    <div class="col-xs-12">
+                        <h2 class="text-center">Test de Personalidades de Personaje</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-3">
+                        <legend class="text-center">Marly</legend>
+                        <img src="img/marly.png">
+                    </div>
+                    <div class="col-xs-9" style="padding-top:25px">
+                        <p>1. ¿Ella confia facilmente en las personas?</p>
+                        <div class="checkbox checkbox-circle">
+                            <input id="checkbox1" name="confianza" value="0" type="radio">
+                            <label for="checkbox1">
+                                Si
+                            </label>
+                        </div>
+                        <div class="checkbox checkbox-circle">
+                            <input id="checkbox2" name="confianza" value="1" type="radio">
+                            <label for="checkbox2">
+                                No
+                            </label>
+                        </div>
+                        <p>2. ¿Como es su carácter?</p>
+                        <div class="checkbox checkbox-circle">
+                            <input id="checkbox3" name="caracter" value="0" type="radio">
+                            <label for="checkbox3">
+                                Fuerte
+                            </label>
+                        </div>
+                        <div class="checkbox checkbox-circle">
+                            <input id="checkbox4" name="caracter" value="1" type="radio">
+                            <label for="checkbox4">
+                                Noble
+                            </label>
+                        </div>
+                        <p>3. ¿Ella tiene instinto de supervivencia?</p>
+                        <div class="checkbox checkbox-circle">
+                            <input id="checkbox9" name="supervivencia" value="0" type="radio">
+                            <label for="checkbox9">
+                                Si
+                            </label>
+                        </div>
+                        <div class="checkbox checkbox-circle">
+                            <input id="checkbox10" name="supervivencia" value="1" type="radio">
+                            <label for="checkbox10">
+                                No
+                            </label>
+                        </div>
+                        <button id="empezar" class="btn btn-success pull-right">Empezar</button>
+                    </div>
+                </div>
+            </div>
+            <div id="juego" style="display:none">
+                <img src="img/intro1.gif">
+            </div>
+        </div>
+        <script src="js/jquery-3.0.0.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/dijkstra.js"></script>
+        <script type="text/javascript">
+            var nodos = [];
+        
+            function Nodo(id, img, peso) {
+                this.id = id;
+                this.img = img;
+                this.peso = peso;
+            }
+
+            nodos.push(new Nodo('0', 'img/nodo0.gif', {'1':100}));
+            nodos.push(new Nodo('1', 'img/nodo1.gif', {'2':100, '3':100, '4':100}));
+            nodos.push(new Nodo('2', 'img/nodo2.png',{'7':100}));
+            nodos.push(new Nodo('3', 'img/nodo3.png', {'5':100, '6':100}));
+            nodos.push(new Nodo('4', 'img/nodo4.png', {'5':100}));
+            nodos.push(new Nodo('5', 'img/nodo5.gif', {'10':100}));
+            nodos.push(new Nodo('6', 'img/nodo6.gif', {'9':100}));
+            nodos.push(new Nodo('7', 'img/nodo7.gif', {'8':100}));
+            nodos.push(new Nodo('8', 'img/nodo8.gif', {'12':100}));
+            nodos.push(new Nodo('9', 'img/nodo9.png', {'11':100, '12':100}));
+            nodos.push(new Nodo('10', 'img/nodo10.png', {'11':100}));
+            nodos.push(new Nodo('11', 'img/nodo11.gif', {'12':100, '13':100, '17':100}));
+            nodos.push(new Nodo('12', 'img/nodo12_1.gif', {'14':100, '15':100, '16':100}));
+            nodos.push(new Nodo('13', 'img/nodo12_2.gif', {'14':100, '15':100, '16':100}));
+            nodos.push(new Nodo('14', 'img/F1_1.png', {}));
+            nodos.push(new Nodo('15', 'img/F1_2.png', {}));
+            nodos.push(new Nodo('16', 'img/F2.png', {}));
+            nodos.push(new Nodo('17', 'img/F3.gif', {}));
+            var grafo = new Graph();
+            var index = 0;
+            for(var i=0;i<nodos.length; i++) {
+                grafo.addVertex(nodos[i].id, nodos[i].peso);
+            }
+            $(document).on('click', '#empezar', function(){
+                var confianza = $('input[name=confianza]:checked').val();
+                var caracter = $('input[name=caracter]:checked').val();
+                var supervivencia = $('input[name=supervivencia]:checked').val();
+                if(confianza && caracter && supervivencia) {
+                    // Personalidad
+                    var personalidad = '';
+                    if(confianza == 0) {
+                        personalidad += '<br>Entusiasta y optimista.<br>';
+                    }else{
+                        personalidad += '<br>Prudente, reservada y meticulosa.<br> ';
+                    }
+                    if(caracter == 0) {
+                        personalidad += 'Contundente y firme en la toma de deciciones. <br>';
+                    }else{
+                        personalidad += 'Paciente y sereno en la toma de decisiones.<br> ';
+                    }
+                    if(supervivencia == 0) {
+                        personalidad += 'Fuerte y audaz.<br> Te representa el color amarillo.';
+                    }else{
+                        personalidad += 'Introvetido. <br> Te representa el color azul.';
+                    }
+                    //
+                    $('#test').hide();
+                    $('#juego').show();
+                    var final;
+                    //caminos
+                    console.log(confianza+' '+caracter+' '+supervivencia);
+                    if(caracter == 0) {
+                        if(confianza == 0) {
+                            nodos[1].peso['2'] = 1;
+                        }else{
+                            nodos[1].peso['4'] = 1;
+                        }
+                        if(supervivencia == 0) {
+                            nodos[12].peso['15'] = 1;
+                            final = '15';
+                        }else{
+                            nodos[11].peso['17'] = 1;
+                            final = '17';
+                        }
+                    }else{
+                        nodos[1].peso['3'] = 1;
+                        if(supervivencia == 0) {
+                            nodos[11].peso['16'] = 1;
+                            final = '16';
+                        }else{
+                            nodos[13].peso['14'] = 1;
+                            final = '14';
+                        }
+                    }
+                    var camino = grafo.shortestPath('0', final).concat(['0']).reverse();
+                    ruta = ruta(camino);
+                    setTimeout(function(){ 
+                        setInterval(function(){
+                            if(index < camino.length) {
+                                $('#juego').html('<img src="'+get(camino[index++]).img+'">');
+                            }else{
+                                $('#juego').html('<h1 class="text-center">Fin de la historia</h1><h2><B>La ruta mostrada según Test fue: </B>' + ruta + '.</h2><h2><B>Te definimos como una persona: </B>'+personalidad+'</h2><button id="volver" class="btn btn-success"><i class="fa fa-arrow-left"></i> Volver</button>');
+                            }
+                        }, 15 * 1000);
+                    }, 23 * 1000);
+                }else{
+                    alert('Debe realizar el test completamente antes de empezar.');
+                }
+            });
+            function get(id) {
+                for(var i=0;i<nodos.length; i++) {
+                    if(nodos[i].id == id){
+                        return nodos[i];
+                    }
+                }
+                return null;
+            }
+            function ruta(camino) {
+                ruta = '';
+                for(var i=0;i<camino.length; i++) {
+                    nodo = nodos[camino[i]].id;
+                    switch(nodo) {
+                        case '12':
+                            nodo = '12_1';
+                            break;
+                        case '13':
+                            nodo = '12_2';
+                            break;
+                        case '14':
+                            nodo = 'F1_1';
+                            break;
+                        case '15':
+                            nodo = 'F1_2';
+                            break;
+                        case '16':
+                            nodo = 'F2';
+                            break;
+                        case '17':
+                            nodo = 'F3';
+                            break;
+                    }
+                    ruta += nodo + ' ';
+                }
+                return ruta;
+            }
+            $(document).on('click', '#volver', function(){
+                location.reload();
+            });
+        </script>
+    </body>
+</html>
